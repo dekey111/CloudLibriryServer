@@ -18,10 +18,10 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        readonly CloudLibriryContext _context;
-        public AuthController(CloudLibriryContext context)
+        readonly CloudLibriryContext context;
+        public AuthController(CloudLibriryContext _context)
         {
-            _context = context;
+            context = _context;
         }
 
         /// <summary>
@@ -34,10 +34,12 @@ namespace Server.Controllers
         {
             var passwordHash = md5.hashPassword(token.Password);
 
-            var user = _context.Users.FirstOrDefault(x => x.Login == token.Login);
+            //Проверка пользователя в БД
+            var user = context.Users.FirstOrDefault(x => x.Login == token.Login);
             if (user == null)
                 return BadRequest("Пользователь не найден!");
 
+            //Настройка JWT-Токена
             var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.Login) };
             var jwt = new JwtSecurityToken( issuer: AuthToken.ISSUER, audience: AuthToken.AUDIENCE,
             claims: claims,
@@ -55,7 +57,10 @@ namespace Server.Controllers
             return Ok();
         }
 
-
+        /// <summary>
+        /// Метод проверки авторизации
+        /// </summary>
+        /// <returns>Возвращает 200 при активном токене</returns>
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Authentication()
