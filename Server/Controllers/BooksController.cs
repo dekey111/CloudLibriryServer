@@ -32,7 +32,6 @@ namespace Server.Controllers
             {
                 return BadRequest($"Критическая ошибка! \nОписание ошибки: {ex.Message}");
             }
-
         }
 
         [HttpGet("{id}")]
