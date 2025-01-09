@@ -29,7 +29,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="token">Принимает параметры токена</param>
         /// <returns>Возвращает </returns>
-        [HttpGet("GetToken")]
+        [HttpPost("GetToken")]
         public IActionResult GetToken([FromBody] TokenRequest token)
         {
             var passwordHash = md5.hashPassword(token.Password);
