@@ -33,9 +33,8 @@ namespace Server.Controllers
         public IActionResult GetToken([FromBody] TokenRequest token)
         {
             var passwordHash = md5.hashPassword(token.Password);
-
             //Проверка пользователя в БД
-            var user = context.Users.FirstOrDefault(x => x.Login == token.Login);
+            var user = context.Users.FirstOrDefault(x => x.Login == token.Login && x.Password == passwordHash);
             if (user == null)
                 return BadRequest("Пользователь не найден!");
 
@@ -54,7 +53,7 @@ namespace Server.Controllers
                 IdRole = user.IdRole,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwt)
             };
-            return Ok();
+            return Ok(userResponse);
         }
 
         /// <summary>
